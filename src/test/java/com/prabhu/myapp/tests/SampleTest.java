@@ -5,7 +5,11 @@ import com.prabhu.myapp.base.BaseTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.prabhu.myapp.helpers.LoggerHelper;
+import org.apache.logging.log4j.Logger;
+
 public class SampleTest extends BaseTest {
+    protected static final Logger logger = LoggerHelper.getLogger(SampleTest.class);
 
     @Test
     public void openHomePageTest() {
@@ -14,7 +18,7 @@ public class SampleTest extends BaseTest {
         page.navigate(baseUrl);
 
         String pageTitle = page.title();
-        System.out.println("Page title: " + pageTitle);
+        logger.info("Page Title: "+ pageTitle);
 
         Assert.assertTrue(pageTitle.toLowerCase().contains("your expected text"), "Title did not match!");
     }
