@@ -1,0 +1,7 @@
+<suite name="SampleSuite">
+    <test name="SampleTest">
+        <classes>
+            <class name="com.prabhu.myapp.SampleTest"/>
+        </classes>
+    </test>
+</suite>

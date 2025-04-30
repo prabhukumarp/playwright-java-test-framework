@@ -1,0 +1,55 @@
+# Java
+*.class
+*.log
+*.ctxt
+*.jar
+*.war
+*.ear
+
+# Maven
+target/
+dependency-reduced-pom.xml
+buildNumber.properties
+release.properties
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Logs and reports
+*.log
+logs/
+reports/
+
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VSCode (if used)
+.vscode/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+*.yml
+*.yaml
+
+# Docker
+*.pid
+*.tar
+*.gz
+*.swp
+
+# Generated PDFs and screenshots
+*.pdf
+screenshots/
+
+# Git
+*.orig
