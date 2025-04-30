@@ -1,7 +1,7 @@
 <suite name="SampleSuite">
     <test name="SampleTest">
         <classes>
-            <class name="com.prabhu.myapp.SampleTest"/>
+            <class name="com.prabhu.myapp.tests.SampleTest"/>
         </classes>
     </test>
 </suite>

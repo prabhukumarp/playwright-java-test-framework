@@ -4,7 +4,9 @@ public class EnvironmentConfig {
     private CredentialConfig credentials;
     private DatabaseConfig database;
     private ApiConfig api;
+    private ApplicationConfig applicationConfig;
     private PlaywrightConfig playwright;
+    private String browser;
 
     // Getters and Setters
 
@@ -38,5 +40,21 @@ public class EnvironmentConfig {
 
     public void setPlaywright(PlaywrightConfig playwright) {
         this.playwright = playwright;
+    }
+
+    public String getBrowser() {
+        return browser;
+    }
+
+    public void setBrowser(String browser) {
+        this.browser = browser;
+    }
+
+    public ApplicationConfig getApplicationConfig() {
+        return applicationConfig;
+    }
+
+    public void setApplicationConfig(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
     }
 }

@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.prabhu.myapp.config.models.EnvironmentConfig;
 import com.prabhu.myapp.config.models.FrameworkConfig;
+import com.prabhu.myapp.exceptions.ConfigLoadException;
 import com.prabhu.myapp.helpers.ExceptionHelper;
 import com.prabhu.myapp.helpers.LoggerHelper;
-import com.prabhu.myapp.exceptions.ConfigLoadException;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import org.apache.logging.log4j.Logger;
 
@@ -48,7 +49,8 @@ public class YamlConfigLoader {
             return mapper.readValue(inputStream, EnvironmentConfig.class);
         } catch (IOException e) {
             ExceptionHelper.logAndThrow(logger, "Failed to load " + envFile, e);
-            return null;
+            throw new ConfigLoadException(envFile + " could not be loaded", e);
         }
     }
 }
+
