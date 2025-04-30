@@ -37,23 +37,30 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
-        ExtentTestManager.getTest().pass("✅ Test Passed");
+        Object currentInstance = result.getInstance();
 
-        if (frameworkConfig.getReports().isCaptureOnSuccess()) {
+        if (frameworkConfig.getReports().isCaptureOnSuccess() && currentInstance instanceof BaseTest baseTest) {
+            Page page = baseTest.getPage();
+            String testName = result.getMethod().getMethodName();
             captureScreenshot(result);
+            if (page != null) {
+                try {
+                    byte[] screenshotBytes = page.screenshot(new Page.ScreenshotOptions());
+                    String base64Screenshot = Base64.getEncoder().encodeToString(screenshotBytes);
+
+                    ExtentTestManager.getTest().pass("✅ Test Passed. Screenshot below:")
+                            .addScreenCaptureFromBase64String(base64Screenshot, testName + "_screenshot");
+
+                    logger.info("✅ Test Passed: {} (screenshot captured)", testName);
+                } catch (Exception e) {
+                    logger.warn("Could not capture screenshot for passed test: {}", testName, e);
+                }
+            }
+        } else {
+            ExtentTestManager.getTest().pass("✅ Test Passed.");
+            logger.info("✅ Test Passed: {}", result.getMethod().getMethodName());
         }
-
-        logger.info("✅ Test Passed: {}", testName);
     }
-
-    /*@Override
-    public void onTestFailure(ITestResult result) {
-        String testName = result.getMethod().getMethodName();
-        ExtentTestManager.getTest().fail("❌ Test Failed");
-        captureScreenshot(result);
-        logger.error("❌ Test Failed: {}", testName);
-    }*/
 
     @Override
     public void onTestFailure(ITestResult result) {
