@@ -7,8 +7,6 @@ import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.exceptions.ConfigLoadException;
 import com.prabhu.myapp.helpers.ExceptionHelper;
 import com.prabhu.myapp.helpers.LoggerHelper;
-import jakarta.inject.Inject;
-import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import org.apache.logging.log4j.Logger;
 
@@ -24,33 +22,55 @@ public class YamlConfigLoader {
 
     private final ObjectMapper mapper;
 
-    @Inject
+    private FrameworkConfig frameworkConfig;
+    private EnvironmentConfig environmentConfig;
+
     public YamlConfigLoader() {
         this.mapper = new ObjectMapper(new YAMLFactory());
     }
 
     public FrameworkConfig loadFrameworkConfig() {
-        try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(APP_CONFIG_FILE)) {
-            ExceptionHelper.throwIfNull(inputStream, "application.yml not found in classpath", logger);
-            return mapper.readValue(inputStream, FrameworkConfig.class);
+        if (frameworkConfig != null) return frameworkConfig;
+
+        logger.info("Loading base framework config from '{}'", APP_CONFIG_FILE);
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(APP_CONFIG_FILE)) {
+            ExceptionHelper.throwIfNull(inputStream, APP_CONFIG_FILE + " not found in classpath", logger);
+
+            frameworkConfig = mapper.readValue(inputStream, FrameworkConfig.class);
+
+            ExceptionHelper.throwIf(frameworkConfig.getApplicationConfig() == null,
+                    "Missing 'applicationConfig' section in " + APP_CONFIG_FILE, logger);
+
+            logger.info("Loaded framework config. Environment = '{}'",
+                    frameworkConfig.getApplicationConfig().getEnvironment());
+
+            return frameworkConfig;
         } catch (IOException e) {
-            ExceptionHelper.logAndThrow(logger, "Failed to load application.yml", e);
-            throw new ConfigLoadException("application.yml could not be loaded", e);
+            ExceptionHelper.logAndThrow(logger, "Failed to load " + APP_CONFIG_FILE, new ConfigLoadException("YAML parsing failed", e));
+            return null; // unreachable, but required for compilation
         }
     }
 
     public EnvironmentConfig loadEnvironmentConfig() {
-        FrameworkConfig frameworkConfig = loadFrameworkConfig();
-        String env = frameworkConfig.getApp().getEnvironment();
+        if (environmentConfig != null) return environmentConfig;
+
+        FrameworkConfig baseConfig = loadFrameworkConfig();
+        String env = baseConfig.getApplicationConfig().getEnvironment();
         String envFile = ENV_FOLDER + env + ".yml";
 
-        try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(envFile)) {
+        logger.info("Loading environment config from '{}'", envFile);
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(envFile)) {
             ExceptionHelper.throwIfNull(inputStream, envFile + " not found in classpath", logger);
-            return mapper.readValue(inputStream, EnvironmentConfig.class);
+
+            environmentConfig = mapper.readValue(inputStream, EnvironmentConfig.class);
+
+            logger.info("Successfully loaded environment config: '{}'", envFile);
+            return environmentConfig;
         } catch (IOException e) {
-            ExceptionHelper.logAndThrow(logger, "Failed to load " + envFile, e);
-            throw new ConfigLoadException(envFile + " could not be loaded", e);
+            ExceptionHelper.logAndThrow(logger, "Failed to load " + envFile, new ConfigLoadException("Environment config parsing failed", e));
+            return null; // unreachable, but required for compilation
         }
     }
 }
-

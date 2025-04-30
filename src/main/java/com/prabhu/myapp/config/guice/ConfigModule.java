@@ -3,9 +3,9 @@ package com.prabhu.myapp.config.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.prabhu.myapp.config.utils.YamlConfigLoader;
 import com.prabhu.myapp.config.models.EnvironmentConfig;
 import com.prabhu.myapp.config.models.FrameworkConfig;
+import com.prabhu.myapp.config.utils.YamlConfigLoader;
 
 public class ConfigModule extends AbstractModule {
 

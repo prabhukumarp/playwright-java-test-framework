@@ -11,6 +11,7 @@ target/
 dependency-reduced-pom.xml
 buildNumber.properties
 release.properties
+/target/
 
 # Playwright
 test-results/
@@ -18,9 +19,9 @@ playwright-report/
 playwright/.cache/
 
 # Logs and reports
-*.log
-logs/
-reports/
+/*.log
+/logs/
+/reports/
 
 # IntelliJ
 .idea/
@@ -38,8 +39,8 @@ Thumbs.db
 
 # Environment files
 .env
-*.yml
-*.yaml
+#*.yml
+#*.yaml
 
 # Docker
 *.pid
@@ -50,6 +51,7 @@ Thumbs.db
 # Generated PDFs and screenshots
 *.pdf
 screenshots/
+/screenshots/
 
 # Git
 *.orig

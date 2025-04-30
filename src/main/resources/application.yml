@@ -1,0 +1,47 @@
+# application.yml
+
+reports:
+  captureOnSuccess: false
+  title: "MyApp Test Report"
+  #reportPath: "reports/"
+  reportPath: "target/test-output/reports/"
+  screenshotsPath: "target/test-output/screenshots/"
+  pdfPath: "target/test-output/pdfs/"
+  logsPath: "target/test-output/logs/"
+  theme: dark
+
+applicationConfig:
+  name: "myapp-functional-automation"
+  baseUrl: "https://ecommerce-playground.lambdatest.io/"
+  retryCount: 2
+  logLevel: INFO
+  environment: qa
+  browserConfig:
+    name: chrome
+    headless: false
+    timeout: 10
+
+notifications:
+  email:
+    enabled: false
+    recipients:
+      - prabhukumarp@gmail.com
+      - test@gmail.com
+    smtp:
+      host: smtp.example.com
+      port: 587
+      username: user@example.com
+      password: encrypted_password_here
+  teams:
+    enabled: false
+    webhookUrl: https://outlook.office.com/webhook/
+
+database:
+  enabled: false
+  name: postgres
+  defaultSchema: public
+
+playwright:
+  takeScreenshots: true
+  recordVideo: false
+  trace: retain-on-failure

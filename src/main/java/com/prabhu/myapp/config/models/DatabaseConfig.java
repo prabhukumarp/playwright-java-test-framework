@@ -2,9 +2,13 @@ package com.prabhu.myapp.config.models;
 
 public class DatabaseConfig {
     private boolean enabled;
-    private String type;
+    private String name;
     private String defaultSchema;
-    private  String host;
+
+    private String url;
+    private String username;
+    private String password;
+
     // Getters and Setters
 
     public boolean isEnabled() {
@@ -15,12 +19,12 @@ public class DatabaseConfig {
         this.enabled = enabled;
     }
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDefaultSchema() {
@@ -31,11 +35,27 @@ public class DatabaseConfig {
         this.defaultSchema = defaultSchema;
     }
 
-    public String getHost() {
-        return host;
+    public String getUrl() {
+        return url;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

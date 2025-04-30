@@ -1,11 +1,18 @@
 package com.prabhu.myapp.config.models;
 
 public class PlaywrightConfig {
+    private boolean takeScreenshots;
     private boolean recordVideo;
     private String trace;
-    private PlaywrightViewport viewport;
+    private Viewport viewport;
 
-    // Getters and Setters
+    public boolean isTakeScreenshots() {
+        return takeScreenshots;
+    }
+
+    public void setTakeScreenshots(boolean takeScreenshots) {
+        this.takeScreenshots = takeScreenshots;
+    }
 
     public boolean isRecordVideo() {
         return recordVideo;
@@ -23,11 +30,11 @@ public class PlaywrightConfig {
         this.trace = trace;
     }
 
-    public PlaywrightViewport getViewport() {
+    public Viewport getViewport() {
         return viewport;
     }
 
-    public void setViewport(PlaywrightViewport viewport) {
+    public void setViewport(Viewport viewport) {
         this.viewport = viewport;
     }
 }

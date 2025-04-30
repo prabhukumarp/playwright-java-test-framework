@@ -4,42 +4,60 @@ import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import com.prabhu.myapp.config.models.ApplicationConfig;
-import com.prabhu.myapp.config.models.EnvironmentConfig;
+import com.prabhu.myapp.config.models.BrowserConfig;
+import com.prabhu.myapp.config.models.FrameworkConfig;
+import com.prabhu.myapp.helpers.ExceptionHelper;
+import com.prabhu.myapp.helpers.LoggerHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.apache.logging.log4j.Logger;
-import com.prabhu.myapp.helpers.LoggerHelper;
 
 @Singleton
 public class DriverFactory {
 
     private static final Logger logger = LoggerHelper.getLogger(DriverFactory.class);
 
-    private EnvironmentConfig environmentConfig;
-    private ApplicationConfig applicationConfig;
+    private final BrowserConfig browserConfig;
 
     @Inject
-    public DriverFactory(EnvironmentConfig environmentConfig) {
-        this.environmentConfig = environmentConfig;
+    public DriverFactory(FrameworkConfig frameworkConfig) {
+        ApplicationConfig applicationConfig = frameworkConfig.getApplicationConfig();
+        this.browserConfig = applicationConfig.getBrowserConfig();
+
+        ExceptionHelper.throwIfNull(applicationConfig, "ApplicationConfig is null", logger);
+        ExceptionHelper.throwIfNull(browserConfig, "BrowserConfig is null", logger);
+
+        logger.info("DriverFactory initialized with browser = '{}', headless = '{}'",
+                browserConfig.getName(), browserConfig.isHeadless());
     }
 
-    public void loadEnvironmentConfig(EnvironmentConfig config) {
-        // This method could load the configuration dynamically based on the environment
-        logger.info("Loaded environment configuration: " + config);
-    }
+    public Browser createBrowser(Playwright playwright) {
+        String browserType = browserConfig.getName().toLowerCase();
 
-    public Browser createBrowser(Playwright playwright, String browserType) {
-        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions().setHeadless(applicationConfig.isBrowserHeadless());
+        try {
+            BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
+                    .setHeadless(browserConfig.isHeadless())
+                    .setTimeout(browserConfig.getTimeout() * 1000); // Convert to ms
 
-        switch (browserType.toLowerCase()) {
-            case "chromium":
-                return playwright.chromium().launch(options);
-            case "firefox":
-                return playwright.firefox().launch(options);
-            case "webkit":
-                return playwright.webkit().launch(options);
-            default:
-                throw new IllegalArgumentException("Unsupported browser type: " + browserType);
+            logger.info("Launching browser '{}' with headless = {}", browserType, browserConfig.isHeadless());
+
+            switch (browserType) {
+                case "chromium":
+                case "chrome":
+                    return playwright.chromium().launch(options);
+                case "firefox":
+                    return playwright.firefox().launch(options);
+                case "webkit":
+                    return playwright.webkit().launch(options);
+                default:
+                    String message = "Unsupported browser type: " + browserType;
+                    logger.error(message);
+                    throw new IllegalArgumentException(message);
+            }
+
+        } catch (Exception e) {
+            ExceptionHelper.logAndThrow(logger, "Failed to launch browser: " + browserType, e);
+            return null;
         }
     }
 }

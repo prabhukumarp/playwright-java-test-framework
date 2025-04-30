@@ -1,21 +1,27 @@
 package com.prabhu.myapp.config.models;
 
 public class EnvironmentConfig {
-    private CredentialConfig credentials;
-    private DatabaseConfig database;
-    private ApiConfig api;
     private ApplicationConfig applicationConfig;
+    private AppCredentials appCredentials;
+    private DatabaseConfig database;
+    private ApiConfig apiConfig;
     private PlaywrightConfig playwright;
-    private String browser;
 
-    // Getters and Setters
-
-    public CredentialConfig getCredentials() {
-        return credentials;
+    // Getters and setters
+    public ApplicationConfig getApplicationConfig() {
+        return applicationConfig;
     }
 
-    public void setCredentials(CredentialConfig credentials) {
-        this.credentials = credentials;
+    public void setApplicationConfig(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
+
+    public AppCredentials getAppCredentials() {
+        return appCredentials;
+    }
+
+    public void setAppCredentials(AppCredentials appCredentials) {
+        this.appCredentials = appCredentials;
     }
 
     public DatabaseConfig getDatabase() {
@@ -26,12 +32,12 @@ public class EnvironmentConfig {
         this.database = database;
     }
 
-    public ApiConfig getApi() {
-        return api;
+    public ApiConfig getApiConfig() {
+        return apiConfig;
     }
 
-    public void setApi(ApiConfig api) {
-        this.api = api;
+    public void setApiConfig(ApiConfig apiConfig) {
+        this.apiConfig = apiConfig;
     }
 
     public PlaywrightConfig getPlaywright() {
@@ -40,21 +46,5 @@ public class EnvironmentConfig {
 
     public void setPlaywright(PlaywrightConfig playwright) {
         this.playwright = playwright;
-    }
-
-    public String getBrowser() {
-        return browser;
-    }
-
-    public void setBrowser(String browser) {
-        this.browser = browser;
-    }
-
-    public ApplicationConfig getApplicationConfig() {
-        return applicationConfig;
-    }
-
-    public void setApplicationConfig(ApplicationConfig applicationConfig) {
-        this.applicationConfig = applicationConfig;
     }
 }

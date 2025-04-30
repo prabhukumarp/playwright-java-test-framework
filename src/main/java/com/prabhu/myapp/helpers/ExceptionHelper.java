@@ -1,6 +1,7 @@
 package com.prabhu.myapp.helpers;
 
 import com.prabhu.myapp.exceptions.BaseException;
+import com.prabhu.myapp.exceptions.ConfigLoadException;
 import org.apache.logging.log4j.Logger;
 
 public class ExceptionHelper {
@@ -25,4 +26,5 @@ public class ExceptionHelper {
             logAndThrow(logger, message);
         }
     }
+
 }

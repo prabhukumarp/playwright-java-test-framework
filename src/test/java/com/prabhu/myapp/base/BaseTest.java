@@ -1,64 +1,88 @@
 package com.prabhu.myapp.base;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.Playwright;
 import com.google.inject.Inject;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import com.prabhu.myapp.config.models.ApplicationConfig;
-import com.prabhu.myapp.config.models.EnvironmentConfig;
+import com.prabhu.myapp.config.models.BrowserConfig;
+import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.config.utils.DriverFactory;
-import com.prabhu.myapp.config.utils.EnvironmentConfigLoader;
-import com.prabhu.myapp.config.utils.YamlConfigLoader;
 import com.prabhu.myapp.helpers.LoggerHelper;
 import org.apache.logging.log4j.Logger;
 import org.testng.annotations.*;
 
+@Listeners({
+        com.prabhu.myapp.listeners.TestListener.class,
+        com.prabhu.myapp.utils.reports.PdfSummaryReportGenerator.class
+})
 public class BaseTest {
 
     @Inject
-    private EnvironmentConfigLoader environmentConfigLoader;
+    protected FrameworkConfig frameworkConfig;
 
-    protected static Playwright playwright;
-    protected static Browser browser;
+    @Inject
+    protected DriverFactory driverFactory;
 
-    protected static EnvironmentConfig environmentConfig;
-    protected static ApplicationConfig applicationConfig;
+    protected Playwright playwright;
+    protected Browser browser;
 
-    protected static DriverFactory driverFactory;
+    protected ApplicationConfig applicationConfig;
+    protected BrowserConfig browserConfig;
 
-    protected static final Logger logger = LoggerHelper.getLogger(BaseTest.class);
+    // ✅ ThreadLocal to support parallel execution
+    private static final ThreadLocal<Page> threadLocalPage = new ThreadLocal<>();
 
-    @BeforeClass
+    protected final Logger logger = LoggerHelper.getLogger(BaseTest.class);
+
+    // ✅ Getter to be used by listeners
+    public Page getPage() {
+        return threadLocalPage.get();
+    }
+
+    @BeforeClass(alwaysRun = true)
     public void setUpClass() {
-        environmentConfig = environmentConfigLoader.get();  // ✅ Uses injected config loader
-        applicationConfig = environmentConfig.getApplicationConfig();
-        driverFactory = new DriverFactory(environmentConfig);
-        driverFactory.loadEnvironmentConfig(environmentConfig);
+        applicationConfig = frameworkConfig.getApplicationConfig();
+        browserConfig = applicationConfig.getBrowserConfig();
+
+        logger.info("🔧 Framework initialized");
+        logger.info("🌐 Base URL: {}", applicationConfig.getBaseUrl());
+        logger.info("🧪 Browser: {}", browserConfig.getName());
+        logger.info("🕶️ Headless: {}", browserConfig.isHeadless());
     }
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUp() {
-        logger.info("🚀 Starting Playwright...");
+        logger.info("🚀 Initializing Playwright and launching browser...");
         playwright = Playwright.create();
-        String browserType = environmentConfig.getBrowser();        // chromium, firefox, etc.
-        browser = driverFactory.createBrowser(playwright, browserType);
-        logger.info("✅ Browser launched: " + browserType);
+        browser = driverFactory.createBrowser(playwright);
+
+        Page page = browser.newPage(); // ✅ Create page instance
+        threadLocalPage.set(page);     // ✅ Store it thread-locally
+
+        logger.info("✅ Browser launched: {}", browserConfig.getName());
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
+        Page page = threadLocalPage.get();
+        if (page != null) {
+            page.close(); // ✅ Clean up page instance
+            threadLocalPage.remove();
+        }
+
         if (browser != null) {
             browser.close();
-            logger.info("🧹 Browser closed");
+            logger.info("🧹 Browser closed.");
         }
         if (playwright != null) {
             playwright.close();
-            logger.info("🧹 Playwright shutdown");
+            logger.info("🧹 Playwright shut down.");
         }
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void cleanUpClass() {
-        logger.info("🏁 Test class execution complete");
-        // Currently nothing extra to clean — later we can handle reports/cleanup here.
+        logger.info("🏁 Test class execution completed.");
     }
 }

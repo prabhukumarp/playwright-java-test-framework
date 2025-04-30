@@ -1,0 +1,22 @@
+# environment/dev.yml
+
+applicationConfig:
+  baseUrl: https://ecommerce-playground.lambdatest.io/
+
+appCredentials:
+  username: prabhukumarp
+  password: Test1234
+
+database:
+  url: jdbc:postgresql://qa-db.example.com:5432/mydb
+  username: dbuser
+  password: dbpassword
+
+apiConfig:
+  apiUrl: https://api.qa.example.com/v1
+  authToken: token-value-here
+
+playwright:
+  viewport:
+    width: 1280
+    height: 800

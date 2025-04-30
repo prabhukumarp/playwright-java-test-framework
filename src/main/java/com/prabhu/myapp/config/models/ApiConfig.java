@@ -1,17 +1,16 @@
 package com.prabhu.myapp.config.models;
 
 public class ApiConfig {
-    private String baseUrl;
+    private String apiUrl;
     private String authToken;
 
-    // Getters and Setters
-
-    public String getBaseUrl() {
-        return baseUrl;
+    // Getters and setters
+    public String getApiUrl() {
+        return apiUrl;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public void setApiUrl(String apiUrl) {
+        this.apiUrl = apiUrl;
     }
 
     public String getAuthToken() {

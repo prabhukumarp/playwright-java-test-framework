@@ -1,10 +1,8 @@
 package com.prabhu.myapp.config.models;
 
-public class PlaywrightViewport {
+public class Viewport {
     private int width;
     private int height;
-
-    // Getters and Setters
 
     public int getWidth() {
         return width;

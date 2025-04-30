@@ -1,44 +1,35 @@
 package com.prabhu.myapp.config.models;
 
 public class FrameworkConfig {
-    private String defaultEnv;
-    private ReportConfig report;
-    private ApplicationConfig app;
-    private NotificationsConfig notifications;
+    private ReportConfig reports;
+    private ApplicationConfig applicationConfig;
+    private NotificationConfig notifications;
     private DatabaseConfig database;
     private PlaywrightConfig playwright;
 
     // Getters and Setters
 
-    public String getDefaultEnv() {
-        return defaultEnv;
+    public ReportConfig getReports() {
+        return reports;
     }
 
-    public void setDefaultEnv(String defaultEnv) {
-        this.defaultEnv = defaultEnv;
+    public void setReports(ReportConfig reports) {
+        this.reports = reports;
     }
 
-    public ReportConfig getReport() {
-        return report;
+    public ApplicationConfig getApplicationConfig() {
+        return applicationConfig;
     }
 
-    public void setReport(ReportConfig report) {
-        this.report = report;
+    public void setApplicationConfig(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
     }
 
-    public ApplicationConfig getApp() {
-        return app;
-    }
-
-    public void setApp(ApplicationConfig app) {
-        this.app = app;
-    }
-
-    public NotificationsConfig getNotifications() {
+    public NotificationConfig getNotifications() {
         return notifications;
     }
 
-    public void setNotifications(NotificationsConfig notifications) {
+    public void setNotifications(NotificationConfig notifications) {
         this.notifications = notifications;
     }
 
@@ -58,3 +49,4 @@ public class FrameworkConfig {
         this.playwright = playwright;
     }
 }
+

@@ -1,11 +1,10 @@
 package com.prabhu.myapp.config.models;
 
-public class CredentialConfig {
+public class AppCredentials {
     private String username;
     private String password;
 
-    // Getters and Setters
-
+    // Getters and setters
     public String getUsername() {
         return username;
     }
