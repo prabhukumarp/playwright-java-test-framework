@@ -2,6 +2,7 @@ package com.prabhu.myapp.config.models;
 
 public class ReportConfig {
     private  boolean captureOnSuccess;
+    private boolean captureFailuresInPdf;
     private String title;
     private String reportPath;
     private String theme;
@@ -17,6 +18,14 @@ public class ReportConfig {
 
     public void setCaptureOnSuccess(boolean captureOnSuccess) {
         this.captureOnSuccess = captureOnSuccess;
+    }
+
+    public boolean isCaptureFailuresInPdf() {
+        return captureFailuresInPdf;
+    }
+
+    public void setCaptureFailuresInPdf(boolean captureFailuresInPdf) {
+        this.captureFailuresInPdf = captureFailuresInPdf;
     }
 
     public String getTitle() {

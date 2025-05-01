@@ -23,7 +23,7 @@ public class SampleTest extends BaseTest {
     @Inject
     private FrameworkConfig frameworkConfig;
     private static final Logger logger = LoggerHelper.getLogger(SampleTest.class);
-    private Page page;
+    //private Page page;
 
     @Test
     public void openHomePageTest() {

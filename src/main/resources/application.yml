@@ -2,6 +2,7 @@
 
 reports:
   captureOnSuccess: false
+  captureFailuresInPdf: true
   title: "MyApp Test Report"
   #reportPath: "reports/"
   reportPath: "target/test-output/reports/"
