@@ -19,7 +19,7 @@ applicationConfig:
   environment: qa
   browserConfig:
     name: chrome
-    headless: false
+    headless: true
     timeout: 10
 
 notifications:
