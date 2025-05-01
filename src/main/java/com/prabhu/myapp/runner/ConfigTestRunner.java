@@ -7,7 +7,7 @@ import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.config.utils.YamlConfigLoader;
 import com.prabhu.myapp.di.FrameworkModule;
 import com.prabhu.myapp.helpers.LoggerHelper;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 public class ConfigTestRunner {
 

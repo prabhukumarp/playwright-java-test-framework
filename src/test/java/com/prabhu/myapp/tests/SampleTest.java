@@ -2,12 +2,13 @@ package com.prabhu.myapp.tests;
 
 import com.microsoft.playwright.Page;
 import com.prabhu.myapp.base.BaseTest;
+import com.prabhu.myapp.base.TestBase;
 import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.di.FrameworkModule;
 import com.prabhu.myapp.helpers.LoggerHelper;
 import com.prabhu.myapp.helpers.FileHelper;
 import jakarta.inject.Inject;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
@@ -15,6 +16,7 @@ import org.testng.annotations.*;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 
 @Guice(modules = FrameworkModule.class)
 //@Listeners(com.prabhu.myapp.listeners.TestListener.class)
@@ -36,7 +38,7 @@ public class SampleTest extends BaseTest {
         logger.info("Navigated to URL: {}", baseUrl);
         logger.info("Page Title: {}", pageTitle);
 
-        Assert.assertTrue(pageTitle.trim().equalsIgnoreCase("Your Stor"), "Title did not match with actual title! "+pageTitle);
+        Assert.assertTrue(pageTitle.trim().equalsIgnoreCase("Your Store"), "Title did not match with actual title! "+pageTitle);
     }
 
 

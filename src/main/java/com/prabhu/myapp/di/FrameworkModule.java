@@ -8,7 +8,7 @@ import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.config.utils.YamlConfigLoader;
 import com.prabhu.myapp.helpers.ExceptionHelper;
 import com.prabhu.myapp.helpers.LoggerHelper;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 @Singleton
 public class FrameworkModule extends AbstractModule {

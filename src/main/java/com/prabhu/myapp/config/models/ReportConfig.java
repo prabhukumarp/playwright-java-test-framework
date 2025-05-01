@@ -9,6 +9,8 @@ public class ReportConfig {
     private String screenshotsPath;
     private String pdfPath;
     private  String logsPath;
+    private boolean captureLogsInFile;
+    private boolean isArchived;
 
     // Getters and Setters
 
@@ -74,5 +76,21 @@ public class ReportConfig {
 
     public void setLogsPath(String logsPath) {
         this.logsPath = logsPath;
+    }
+
+    public boolean isCaptureLogsInFile() {
+        return captureLogsInFile;
+    }
+
+    public void setCaptureLogsInFile(boolean captureLogsInFile) {
+        this.captureLogsInFile = captureLogsInFile;
+    }
+
+    public boolean isArchived() {
+        return isArchived;
+    }
+
+    public void setArchived(boolean archived) {
+        isArchived = archived;
     }
 }

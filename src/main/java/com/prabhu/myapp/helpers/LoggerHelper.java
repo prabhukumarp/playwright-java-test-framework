@@ -1,12 +1,13 @@
 package com.prabhu.myapp.helpers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class LoggerHelper {
 
     public static Logger getLogger(Class<?> clazz) {
-        return LogManager.getLogger(clazz);
+        return LoggerFactory.getLogger(clazz);
     }
 
     public static void logException(Logger logger, String message, Throwable throwable) {
@@ -23,5 +24,17 @@ public class LoggerHelper {
 
     public static void logWarn(Logger logger, String message) {
         logger.warn(message);
+    }
+
+    public static void putContext(String key, String value) {
+        MDC.put(key, value);
+    }
+
+    public static void removeContext(String key) {
+        MDC.remove(key);
+    }
+
+    public static void clearContext() {
+        MDC.clear();
     }
 }

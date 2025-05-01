@@ -11,7 +11,7 @@ import com.prabhu.myapp.helpers.LoggerHelper;
 import com.prabhu.myapp.models.FailureInfo;
 import com.prabhu.myapp.utils.reports.ExtentTestManager;
 import com.prabhu.myapp.utils.reports.PdfFailureReportGenerator;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -36,6 +36,18 @@ public class TestListener implements ITestListener {
 
     private final List<FailureInfo> failureInfoList = new ArrayList<>();
 
+
+    @Override
+    public void onStart(ITestContext context) {
+        String suiteName = context.getSuite().getName();
+        //Set logsPath as a System Property (Recommended)
+        System.setProperty("logsPath", frameworkConfig.getReports().getLogsPath());
+        logger.info("logsPath : {}",  frameworkConfig.getReports().getLogsPath());
+        com.prabhu.myapp.helpers.LoggingInitializer.initializeSuiteLogging(suiteName);
+        logger.info("🚀 Test Suite Started: {}", suiteName);
+    }
+
+
     @Override
     public void onTestStart(ITestResult result) {
         String testName = result.getMethod().getMethodName();
@@ -46,7 +58,7 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
         Object currentInstance = result.getInstance();
-
+        logger.info("onTestSuccess capturing isCaptureOnSuccess: {}"+ frameworkConfig.getReports().isCaptureOnSuccess());
         if (frameworkConfig.getReports().isCaptureOnSuccess() && currentInstance instanceof BaseTest baseTest) {
             Page page = baseTest.getPage();
             String testName = result.getMethod().getMethodName();
@@ -111,17 +123,17 @@ public class TestListener implements ITestListener {
         }
     }
 
-
-
-
-
     @Override
     public void onFinish(ITestContext context) {
-
         ExtentTestManager.endTest();
+
         if (frameworkConfig.getReports().isCaptureFailuresInPdf() && !failureInfoList.isEmpty()) {
             PdfFailureReportGenerator.generate(failureInfoList, frameworkConfig.getReports().getPdfPath());
         }
+
+        String suiteName = context.getSuite().getName();
+        logger.info("✅ Test Suite Finished: {}", suiteName);
+        com.prabhu.myapp.helpers.LoggingInitializer.shutdownSuiteLogging();
     }
 
     private void captureScreenshot(ITestResult result) {

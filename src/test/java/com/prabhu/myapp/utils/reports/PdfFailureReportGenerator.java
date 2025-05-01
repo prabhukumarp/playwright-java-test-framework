@@ -4,9 +4,10 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.prabhu.myapp.helpers.FileHelper;
+import com.prabhu.myapp.helpers.LoggerHelper;
 import com.prabhu.myapp.models.FailureInfo;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class PdfFailureReportGenerator {
 
-    private static final Logger logger = LogManager.getLogger(PdfFailureReportGenerator.class);
+    private static final Logger logger = LoggerHelper.getLogger(PdfFailureReportGenerator.class);
 
     public static void generate(List<FailureInfo> failureInfos, String outputPath) {
         try {

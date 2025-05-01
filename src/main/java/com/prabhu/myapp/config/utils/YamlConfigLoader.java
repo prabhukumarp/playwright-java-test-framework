@@ -8,7 +8,7 @@ import com.prabhu.myapp.exceptions.ConfigLoadException;
 import com.prabhu.myapp.helpers.ExceptionHelper;
 import com.prabhu.myapp.helpers.LoggerHelper;
 import jakarta.inject.Singleton;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;

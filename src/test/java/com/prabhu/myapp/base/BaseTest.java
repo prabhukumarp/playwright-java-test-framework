@@ -8,8 +8,10 @@ import com.prabhu.myapp.config.models.ApplicationConfig;
 import com.prabhu.myapp.config.models.BrowserConfig;
 import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.config.utils.DriverFactory;
+import com.prabhu.myapp.di.InjectorProvider;
 import com.prabhu.myapp.helpers.LoggerHelper;
-import org.apache.logging.log4j.Logger;
+import com.prabhu.myapp.helpers.LoggingInitializer;
+import org.slf4j.Logger;
 import org.testng.annotations.*;
 
 @Listeners({
@@ -32,8 +34,10 @@ public class BaseTest {
 
     // ✅ ThreadLocal to support parallel execution
     private static final ThreadLocal<Page> threadLocalPage = new ThreadLocal<>();
+    protected Page page;
 
     protected final Logger logger = LoggerHelper.getLogger(BaseTest.class);
+
 
     // ✅ Getter to be used by listeners
     public Page getPage() {
@@ -42,6 +46,11 @@ public class BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpClass() {
+        if (frameworkConfig == null || driverFactory == null) {
+            InjectorProvider.getInjector().injectMembers(this);
+        }
+        // Manual injection fallback
+        //InjectorProvider.getInjector().injectMembers(this);
         applicationConfig = frameworkConfig.getApplicationConfig();
         browserConfig = applicationConfig.getBrowserConfig();
 
@@ -57,7 +66,7 @@ public class BaseTest {
         playwright = Playwright.create();
         browser = driverFactory.createBrowser(playwright);
 
-        Page page = browser.newPage(); // ✅ Create page instance
+        page = browser.newPage();
         threadLocalPage.set(page);     // ✅ Store it thread-locally
 
         logger.info("✅ Browser launched: {}", browserConfig.getName());
@@ -65,9 +74,12 @@ public class BaseTest {
 
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
-        Page page = threadLocalPage.get();
-        if (page != null) {
-            page.close(); // ✅ Clean up page instance
+        page = threadLocalPage.get();
+        try {
+            if (page != null) page.close();
+        } catch (Exception e) {
+            logger.warn("Failed to close page: {}", e.getMessage());
+        } finally {
             threadLocalPage.remove();
         }
 

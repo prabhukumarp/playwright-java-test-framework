@@ -4,55 +4,59 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.LoadState;
 import com.prabhu.myapp.base.BaseTest;
+import com.prabhu.myapp.base.TestBase;
 import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.helpers.LoggerHelper;
 import jakarta.inject.Inject;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class LoginTest extends BaseTest {
+
     @Inject
     private FrameworkConfig frameworkConfig;
-    private static final Logger logger = LoggerHelper.getLogger(SampleTest.class);
+
+    private static final Logger logger = LoggerHelper.getLogger(LoginTest.class);
 
     @Test
-    public void openHomePageTest() {
-        Page page = getPage(); // ✅ Use from BaseTest
+    public void loginTest() {
+        Page page = getPage(); // ✅ Inherited from BaseTest
         String baseUrl = frameworkConfig.getApplicationConfig().getBaseUrl();
+
+        logger.info("Navigating to base URL: {}", baseUrl);
         page.navigate(baseUrl);
-        page.waitForLoadState(LoadState.NETWORKIDLE); // Wait until network
-        // Click on "My Account" and wait for navigation
+        page.waitForLoadState(LoadState.NETWORKIDLE);
 
         String pageTitle = page.title();
-        logger.info("Navigated to URL: {}", baseUrl);
-        logger.info("Page Title: {}", pageTitle);
-        Assert.assertTrue(pageTitle.trim().equalsIgnoreCase("Your Store"), "Title did not match with actual title! "+pageTitle);
+        logger.info("Page title after navigation: {}", pageTitle);
+        Assert.assertTrue(pageTitle.trim().equalsIgnoreCase("Your Store"),
+                "Expected title 'Your Store' but got: " + pageTitle);
 
-        Locator myAccountLink = page.locator("text=My Account");
-        myAccountLink.waitFor(); // Wait until it's available
+        Locator myAccountLink = page.locator("#main-navigation a.dropdown-toggle[href*=\"account/account\"]");
+        myAccountLink.waitFor();
         myAccountLink.click();
+        logger.info("Clicked on 'My Account' link");
 
-        // Wait for login form to appear
+        // Wait and fill login form
         page.locator("#input-email").waitFor();
-
-        // Enter username and password
         page.fill("#input-email", "invalid@example.com");
         page.fill("#input-password", "wrongpassword");
+        logger.info("Entered invalid login credentials");
 
-        // Click the Login button and wait for alert
         Locator loginButton = page.locator("input[type='submit']");
-        loginButton.waitFor(); // Ensure button is visible
+        loginButton.waitFor();
         loginButton.click();
+        logger.info("Clicked login button");
 
-        // Wait for alert message and assert failure
         Locator alertMessage = page.locator(".alert.alert-danger.alert-dismissible");
-        System.out.println("Alert message: "+ alertMessage.textContent());
-        alertMessage.waitFor(); // Ensure alert appears
-        Assert.assertTrue(alertMessage.isVisible(), "Warning: No match for E-Mail Address and/or Password.");
+        alertMessage.waitFor();
+        String alertText = alertMessage.textContent();
+        logger.info("Alert message displayed: {}", alertText);
 
-        System.out.println("Test Passed: Error message displayed for invalid credentials");
+        Assert.assertTrue(alertMessage.isVisible(),
+                "Expected login failure alert to be visible, but it wasn't");
 
-
+        logger.info("Test passed: Error message correctly displayed for invalid login.");
     }
 }

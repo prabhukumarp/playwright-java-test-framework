@@ -10,7 +10,7 @@ import com.prabhu.myapp.helpers.ExceptionHelper;
 import com.prabhu.myapp.helpers.LoggerHelper;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 @Singleton
 public class DriverFactory {

@@ -1,7 +1,22 @@
-<suite name="SampleSuite">
-    <test name="SampleTest">
-        <classes>
-            <class name="com.prabhu.myapp.tests.SampleTest"/>
-        </classes>
-    </test>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Combined Suite" object-factory="com.prabhu.myapp.config.di.GuiceObjectFactory">
+<test name="Sample Test">
+    <classes>
+        <class name="com.prabhu.myapp.tests.SampleTest"/>
+    </classes>
+</test>
+
+<test name="Login Test">
+    <classes>
+        <class name="com.prabhu.myapp.tests.LoginTest"/>
+    </classes>
+</test>
 </suite>
+
+<!--<suite name="Master Suite" parallel="false" object-factory="com.prabhu.myapp.config.di.GuiceObjectFactory">
+    <suite-files>
+        <suite-file path="test-suite-1.xml"/>
+        <suite-file path="test-suite-2.xml"/>
+    </suite-files>
+</suite>-->

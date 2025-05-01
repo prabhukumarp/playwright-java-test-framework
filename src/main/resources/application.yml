@@ -1,5 +1,4 @@
 # application.yml
-
 reports:
   captureOnSuccess: false
   captureFailuresInPdf: true
@@ -9,11 +8,12 @@ reports:
   screenshotsPath: "target/test-output/screenshots/"
   pdfPath: "target/test-output/pdfs/"
   logsPath: "target/test-output/logs/"
+  captureLogsInFile: true
   theme: dark
 
 applicationConfig:
   name: "myapp-functional-automation"
-  baseUrl: "https://ecommerce-playground.lambdatest.io/"
+  baseUrl: "https://ecommerce-playground.lambdatest.io/index.php"
   retryCount: 2
   logLevel: INFO
   environment: qa

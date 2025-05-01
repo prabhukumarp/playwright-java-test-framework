@@ -1,20 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="warn">
+
+    <!-- Define property for logs path -->
+    <Properties>
+        <Property name="logsPath">${sys:logsPath:-logs}</Property>
+    </Properties>
+
+    <!-- Appenders -->
     <Appenders>
+        <!-- Console Appender with JSON Layout -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <!--compact="false" ensures that the JSON is pretty-printed (for human readability)-->
+            <!--eventEol="true ensures each log event is output on a new line.-->
+            <JSONLayout compact="true" eventEol="true" header="[" footer="]" />
+            <!--<PatternLayout>
+                <Pattern>%d [%t] %-5level: %msg%n</Pattern>
+            </PatternLayout>-->
         </Console>
+
+
+        <!-- Rolling File Appender with JSON Layout -->
+        <RollingFile name="RollingFile" fileName="${logsPath}/application.log"
+                     filePattern="${logsPath}/application-%d{yyyy-MM-dd}.log">
+            <JSONLayout compact="true" eventEol="true" header="[" footer="]" />
+            <Policies>
+                <!-- Rotate daily -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7">
+                <CompressionType>GZ</CompressionType> <!-- Or use ZIP if you prefer ZIP compression -->
+                <!-- Delete log files older than 7 days -->
+                <Delete basePath="${logsPath}" maxDepth="1">
+                    <IfFileName glob="application-*.log.gz" />
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+
+        <!-- Async File Appender -->
+        <Async name="AsyncFile">
+            <AppenderRef ref="RollingFile" />
+        </Async>
     </Appenders>
 
+    <!-- Root Logger Configuration -->
     <Loggers>
-        <!-- Root logger at INFO level -->
-        <Root level="info">
-            <AppenderRef ref="Console"/>
+        <Root level="error">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="AsyncFile" />
         </Root>
 
-        <!-- Optional: Specific logger config -->
         <Logger name="com.prabhu.myapp" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncFile"/>
         </Logger>
     </Loggers>
+
 </Configuration>

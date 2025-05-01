@@ -3,7 +3,7 @@ package com.prabhu.myapp.helpers;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 
 public class ReportCleaner {
     public static void cleanFolder(File folder, Logger logger) {

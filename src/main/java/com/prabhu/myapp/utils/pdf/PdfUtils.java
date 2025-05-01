@@ -36,4 +36,8 @@ public class PdfUtils {
         document.save(path.toFile());
         document.close();
     }
+
+    public static PDPageContentStream createContentStream(PDDocument document, PDPage page) throws IOException {
+        return new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
+    }
 }
