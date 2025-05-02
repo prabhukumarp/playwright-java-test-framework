@@ -1,39 +1,46 @@
 package com.prabhu.myapp.runner;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.prabhu.myapp.config.models.EnvironmentConfig;
 import com.prabhu.myapp.config.models.FrameworkConfig;
-import com.prabhu.myapp.config.utils.YamlConfigLoader;
+import com.prabhu.myapp.config.utils.ConfigLoader;
 import com.prabhu.myapp.di.FrameworkModule;
-import com.prabhu.myapp.helpers.LoggerHelper;
-import org.slf4j.Logger;
 
 public class ConfigTestRunner {
 
-    private static final Logger logger = LoggerHelper.getLogger(ConfigTestRunner.class);
+    @Inject
+    private FrameworkConfig frameworkConfig;
+
+    @Inject
+    private EnvironmentConfig environmentConfig;
 
     public static void main(String[] args) {
-        logger.info("Starting ConfigTestRunner...");
-
-        // Step 1: Create Guice Injector with FrameworkModule
         Injector injector = Guice.createInjector(new FrameworkModule());
+        ConfigTestRunner runner = injector.getInstance(ConfigTestRunner.class);
+        runner.printConfigDetails();
+    }
 
-        // Step 2: Load Framework Config
-        FrameworkConfig frameworkConfig = injector.getInstance(FrameworkConfig.class);
-        logger.info("App Name         : {}", frameworkConfig.getApplicationConfig().getName());
-        logger.info("Base URL         : {}", frameworkConfig.getApplicationConfig().getBaseUrl());
-        logger.info("Browser          : {}", frameworkConfig.getApplicationConfig().getBrowserConfig().getName());
-        logger.info("Report Path      : {}", frameworkConfig.getReports().getReportPath());
+    private void printConfigDetails() {
+        String environment = frameworkConfig.getApplicationConfig().getEnvironment();
+        System.out.println("✅ Active Environment: " + environment);
+        System.out.println("Base URL: " + environmentConfig.getApplicationConfig().getBaseUrl());
+        System.out.println("Username: " + environmentConfig.getAppCredentials().getUsername());
+        System.out.println("Password: " + environmentConfig.getAppCredentials().getPassword());
+        System.out.println("Timeout: " + environmentConfig.getApplicationConfig().getTimeout());
+        System.out.println("Browser: " + environmentConfig.getApplicationConfig().getBrowserConfig().getName());
+        System.out.println("Browser Timeout: " + environmentConfig.getApplicationConfig().getBrowserConfig().getTimeout());
+        System.out.println("Retry Count: " + environmentConfig.getApplicationConfig().getRetryCount());
+        System.out.println("Report Path: " + environmentConfig.getReports().getReportPath());
+        System.out.println("Notification Email: " + environmentConfig.getNotifications().getEmail());
+        System.out.println("Viewport Width: " + environmentConfig.getPlaywright().getViewport().getWidth());
 
-        // Step 3: Load Environment Config
-        EnvironmentConfig envConfig = injector.getInstance(EnvironmentConfig.class);
-        logger.info("Environment URL  : {}", envConfig.getApplicationConfig().getBaseUrl());
-        logger.info("API URL          : {}", envConfig.getApiConfig().getApiUrl());
-        logger.info("DB Host          : {}", envConfig.getDatabase().getUrl());
-        logger.info("Username         : {}", envConfig.getAppCredentials().getUsername());
-        logger.info("Viewport Width   : {}", envConfig.getPlaywright().getViewport().getWidth());
-
-        logger.info("✅ Configuration loading test completed successfully.");
+        // Validation
+        if (environmentConfig.getApplicationConfig().getBaseUrl() == null) {
+            System.err.println("❌ Base URL is not loaded correctly!");
+        } else {
+            System.out.println("✅ Config loaded successfully.");
+        }
     }
 }

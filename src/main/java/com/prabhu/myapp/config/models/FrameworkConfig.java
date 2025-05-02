@@ -6,6 +6,7 @@ public class FrameworkConfig {
     private NotificationConfig notifications;
     private DatabaseConfig database;
     private PlaywrightConfig playwright;
+    private DebugConfig debug;
 
     // Getters and Setters
 
@@ -47,6 +48,14 @@ public class FrameworkConfig {
 
     public void setPlaywright(PlaywrightConfig playwright) {
         this.playwright = playwright;
+    }
+
+    public DebugConfig getDebug() {
+        return debug;
+    }
+
+    public void setDebug(DebugConfig debug) {
+        this.debug = debug;
     }
 }
 

@@ -1,7 +1,7 @@
 # environment/qa.yml
 
 applicationConfig:
-  baseUrl: https://ecommerce-playground.lambdatest.io/
+  baseUrl: "https://ecommerce-playground.lambdatest.io/"
 
 appCredentials:
   username: prabhukumarp

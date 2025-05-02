@@ -6,6 +6,9 @@ public class EnvironmentConfig {
     private DatabaseConfig database;
     private ApiConfig apiConfig;
     private PlaywrightConfig playwright;
+    private ReportConfig reports;
+    private NotificationConfig notifications;
+
 
     // Getters and setters
     public ApplicationConfig getApplicationConfig() {
@@ -46,5 +49,21 @@ public class EnvironmentConfig {
 
     public void setPlaywright(PlaywrightConfig playwright) {
         this.playwright = playwright;
+    }
+
+    public NotificationConfig getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(NotificationConfig notifications) {
+        this.notifications = notifications;
+    }
+
+    public ReportConfig getReports() {
+        return reports;
+    }
+
+    public void setReports(ReportConfig reports) {
+        this.reports = reports;
     }
 }

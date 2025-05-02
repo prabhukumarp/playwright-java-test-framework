@@ -1,8 +1,10 @@
 package com.prabhu.myapp.config.utils;
 
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
+import com.prabhu.myapp.config.models.FrameworkConfig;
 import com.prabhu.myapp.helpers.ExceptionHelper;
 import com.prabhu.myapp.helpers.LoggerHelper;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 
@@ -11,31 +13,41 @@ public class PlaywrightManager {
 
     private static final Logger logger = LoggerHelper.getLogger(PlaywrightManager.class);
 
+    private final DriverFactory driverFactory;
     private Playwright playwright;
+    private Browser browser;
+    private Page page;
 
-    public Playwright getPlaywright() {
-        if (playwright == null) {
-            try {
-                logger.info("Creating Playwright instance...");
-                playwright = Playwright.create();
-                logger.info("Playwright instance created successfully.");
-            } catch (Exception e) {
-                ExceptionHelper.logAndThrow(logger, "Failed to create Playwright instance", e);
-            }
-        }
-        return playwright;
+    @Inject
+    public PlaywrightManager(DriverFactory driverFactory) {
+        this.driverFactory = driverFactory;
     }
 
-    public void close() {
-        if (playwright != null) {
-            try {
-                logger.info("Closing Playwright instance...");
-                playwright.close();
-                playwright = null;
-                logger.info("Playwright instance closed.");
-            } catch (Exception e) {
-                logger.warn("Failed to close Playwright instance: {}", e.getMessage());
-            }
+    public void init() {
+        try {
+            logger.info("Initializing PlaywrightManager...");
+            playwright = Playwright.create();
+            browser = driverFactory.createBrowser(playwright);
+            page = browser.newPage();
+            logger.info("Playwright, Browser and Page initialized.");
+        } catch (Exception e) {
+            ExceptionHelper.logAndThrow(logger, "Failed during Playwright initialization", e);
         }
     }
+
+    public Page getPage() {
+        return page;
+    }
+
+    public void cleanup() {
+        try {
+            if (page != null) page.close();
+            if (browser != null) browser.close();
+            if (playwright != null) playwright.close();
+            logger.info("Resources cleaned up.");
+        } catch (Exception e) {
+            logger.warn("Cleanup issue: {}", e.getMessage());
+        }
+    }
+
 }

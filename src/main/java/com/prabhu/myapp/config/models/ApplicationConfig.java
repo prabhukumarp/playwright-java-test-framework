@@ -7,6 +7,7 @@ public class ApplicationConfig {
     private String logLevel;
     private String environment;
     private BrowserConfig browserConfig;
+    private int timeout;
 
     // Getters and Setters
 
@@ -56,5 +57,13 @@ public class ApplicationConfig {
 
     public void setBrowserConfig(BrowserConfig browserConfig) {
         this.browserConfig = browserConfig;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 }

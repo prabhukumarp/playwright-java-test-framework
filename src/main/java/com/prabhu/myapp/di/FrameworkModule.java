@@ -3,49 +3,32 @@ package com.prabhu.myapp.di;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.prabhu.myapp.config.models.EnvironmentConfig;
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import com.prabhu.myapp.config.models.FrameworkConfig;
-import com.prabhu.myapp.config.utils.YamlConfigLoader;
-import com.prabhu.myapp.helpers.ExceptionHelper;
-import com.prabhu.myapp.helpers.LoggerHelper;
-import org.slf4j.Logger;
+import com.prabhu.myapp.config.models.EnvironmentConfig;
+import com.prabhu.myapp.config.utils.ConfigLoader;
+import com.prabhu.myapp.config.utils.DriverFactory;
+import com.prabhu.myapp.config.utils.PlaywrightManager;
 
-@Singleton
 public class FrameworkModule extends AbstractModule {
-
-    private static final Logger logger = LoggerHelper.getLogger(FrameworkModule.class);
-
-    @Override
-    protected void configure() {
-        logger.info("Binding YamlConfigLoader as Singleton");
-        bind(YamlConfigLoader.class).in(Singleton.class);
+    @Provides
+    @Singleton
+    public ConfigLoader provideConfigLoader() {
+        return new ConfigLoader();
     }
 
     @Provides
     @Singleton
-    public FrameworkConfig provideFrameworkConfig(YamlConfigLoader configLoader) {
-        logger.info("Providing FrameworkConfig from application.yml");
-        try {
-            FrameworkConfig frameworkConfig = configLoader.loadFrameworkConfig();
-            ExceptionHelper.throwIfNull(frameworkConfig, "FrameworkConfig loading failed", logger);
-            return frameworkConfig;
-        } catch (Exception e) {
-            ExceptionHelper.logAndThrow(logger, "Exception while providing FrameworkConfig", e);
-            return null; // not reached, but required for compilation
-        }
+    public FrameworkConfig provideFrameworkConfig(ConfigLoader loader) {
+        return loader.getFrameworkConfig();
     }
 
     @Provides
     @Singleton
-    public EnvironmentConfig provideEnvironmentConfig(YamlConfigLoader configLoader) {
-        logger.info("Providing EnvironmentConfig from environment-specific yml");
-        try {
-            EnvironmentConfig environmentConfig = configLoader.loadEnvironmentConfig();
-            ExceptionHelper.throwIfNull(environmentConfig, "EnvironmentConfig loading failed", logger);
-            return environmentConfig;
-        } catch (Exception e) {
-            ExceptionHelper.logAndThrow(logger, "Exception while providing EnvironmentConfig", e);
-            return null; // not reached, but required for compilation
-        }
+    public EnvironmentConfig provideEnvironmentConfig(ConfigLoader loader) {
+        return loader.getEnvironmentConfig();
     }
+
 }

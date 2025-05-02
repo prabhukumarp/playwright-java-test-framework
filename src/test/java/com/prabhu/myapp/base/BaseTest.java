@@ -1,16 +1,12 @@
 package com.prabhu.myapp.base;
 
 import com.google.inject.Inject;
-import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 import com.prabhu.myapp.config.models.ApplicationConfig;
 import com.prabhu.myapp.config.models.BrowserConfig;
 import com.prabhu.myapp.config.models.FrameworkConfig;
-import com.prabhu.myapp.config.utils.DriverFactory;
-import com.prabhu.myapp.di.InjectorProvider;
+import com.prabhu.myapp.config.utils.PlaywrightManager;
 import com.prabhu.myapp.helpers.LoggerHelper;
-import com.prabhu.myapp.helpers.LoggingInitializer;
 import org.slf4j.Logger;
 import org.testng.annotations.*;
 
@@ -24,33 +20,23 @@ public class BaseTest {
     protected FrameworkConfig frameworkConfig;
 
     @Inject
-    protected DriverFactory driverFactory;
-
-    protected Playwright playwright;
-    protected Browser browser;
+    protected PlaywrightManager playwrightManager;
 
     protected ApplicationConfig applicationConfig;
     protected BrowserConfig browserConfig;
 
-    // ✅ ThreadLocal to support parallel execution
-    private static final ThreadLocal<Page> threadLocalPage = new ThreadLocal<>();
     protected Page page;
+    private static final ThreadLocal<Page> threadLocalPage = new ThreadLocal<>();
+
 
     protected final Logger logger = LoggerHelper.getLogger(BaseTest.class);
 
-
-    // ✅ Getter to be used by listeners
     public Page getPage() {
         return threadLocalPage.get();
     }
 
     @BeforeClass(alwaysRun = true)
     public void setUpClass() {
-        if (frameworkConfig == null || driverFactory == null) {
-            InjectorProvider.getInjector().injectMembers(this);
-        }
-        // Manual injection fallback
-        //InjectorProvider.getInjector().injectMembers(this);
         applicationConfig = frameworkConfig.getApplicationConfig();
         browserConfig = applicationConfig.getBrowserConfig();
 
@@ -62,35 +48,15 @@ public class BaseTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
-        logger.info("🚀 Initializing Playwright and launching browser...");
-        playwright = Playwright.create();
-        browser = driverFactory.createBrowser(playwright);
-
-        page = browser.newPage();
-        threadLocalPage.set(page);     // ✅ Store it thread-locally
-
-        logger.info("✅ Browser launched: {}", browserConfig.getName());
+        playwrightManager.init();
+        page = playwrightManager.getPage();
+        threadLocalPage.set(page);
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
-        page = threadLocalPage.get();
-        try {
-            if (page != null) page.close();
-        } catch (Exception e) {
-            logger.warn("Failed to close page: {}", e.getMessage());
-        } finally {
-            threadLocalPage.remove();
-        }
-
-        if (browser != null) {
-            browser.close();
-            logger.info("🧹 Browser closed.");
-        }
-        if (playwright != null) {
-            playwright.close();
-            logger.info("🧹 Playwright shut down.");
-        }
+        playwrightManager.cleanup();
+        threadLocalPage.remove(); // Clean up threadlocal
     }
 
     @AfterClass(alwaysRun = true)

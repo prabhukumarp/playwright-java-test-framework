@@ -13,14 +13,15 @@ reports:
 
 applicationConfig:
   name: "myapp-functional-automation"
-  baseUrl: "https://ecommerce-playground.lambdatest.io/index.php"
+  baseUrl: "https://ecommerce-playground.lambdatest.io/index.php/"
   retryCount: 2
   logLevel: INFO
   environment: qa
+  timeout: 10
   browserConfig:
     name: chrome
     headless: true
-    timeout: 10
+    timeout: 5
 
 notifications:
   email:
@@ -46,3 +47,5 @@ playwright:
   takeScreenshots: true
   recordVideo: false
   trace: retain-on-failure
+debug:
+  writeMergedConfig: false #Used in ConfigLoader to debug if the config files are merges correctly based on environment
