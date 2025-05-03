@@ -6,6 +6,7 @@ import com.microsoft.playwright.Playwright;
 import com.prabhu.myapp.config.models.ApplicationConfig;
 import com.prabhu.myapp.config.models.BrowserConfig;
 import com.prabhu.myapp.config.models.FrameworkConfig;
+import com.prabhu.myapp.enums.SupportedBrowser;
 import com.prabhu.myapp.helpers.ExceptionHelper;
 import com.prabhu.myapp.helpers.LoggerHelper;
 import jakarta.inject.Inject;
@@ -32,31 +33,42 @@ public class DriverFactory {
     }
 
     public Browser createBrowser(Playwright playwright) {
-        String browserType = browserConfig.getName().toLowerCase();
+        SupportedBrowser browserType = SupportedBrowser.fromString(browserConfig.getName());
+
+        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
+                .setHeadless(browserConfig.isHeadless())
+                .setTimeout(browserConfig.getTimeout() * 1000); // convert to ms
 
         try {
-            BrowserType.LaunchOptions options = new BrowserType.LaunchOptions()
-                    .setHeadless(browserConfig.isHeadless())
-                    .setTimeout(browserConfig.getTimeout() * 1000); // Convert to ms
+            long startTime = System.currentTimeMillis();
 
-            logger.info("Launching browser '{}' with headless = {}", browserType, browserConfig.isHeadless());
+            Browser browser;
 
             switch (browserType) {
-                case "chromium":
-                case "chrome":
-                    return playwright.chromium().launch(options);
-                case "firefox":
-                    return playwright.firefox().launch(options);
-                case "webkit":
-                    return playwright.webkit().launch(options);
+                case CHROME:
+                case CHROMIUM:
+                    browser = playwright.chromium().launch(options);
+                    break;
+                case MSEDGE:
+                    browser = playwright.chromium().launch(
+                            options.setChannel("msedge"));
+                    break;
+                case FIREFOX:
+                    browser = playwright.firefox().launch(options);
+                    break;
+                case WEBKIT:
+                    browser = playwright.webkit().launch(options);
+                    break;
                 default:
-                    String message = "Unsupported browser type: " + browserType;
-                    logger.error(message);
-                    throw new IllegalArgumentException(message);
+                    throw new IllegalStateException("Unexpected value: " + browserType);
             }
 
+            long duration = System.currentTimeMillis() - startTime;
+            logger.info("✅ Browser '{}' launched in {} ms", browserType, duration);
+            return browser;
+
         } catch (Exception e) {
-            ExceptionHelper.logAndThrow(logger, "Failed to launch browser: " + browserType, e);
+            ExceptionHelper.logAndThrow(logger, "❌ Failed to launch browser: " + browserType, e);
             return null;
         }
     }

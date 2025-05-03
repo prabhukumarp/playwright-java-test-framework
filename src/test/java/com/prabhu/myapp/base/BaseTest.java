@@ -25,13 +25,14 @@ public class BaseTest {
     protected ApplicationConfig applicationConfig;
     protected BrowserConfig browserConfig;
 
-    protected Page page;
     private static final ThreadLocal<Page> threadLocalPage = new ThreadLocal<>();
-
-
     protected final Logger logger = LoggerHelper.getLogger(BaseTest.class);
 
     public Page getPage() {
+        return threadLocalPage.get();
+    }
+
+    public static Page currentPage() {
         return threadLocalPage.get();
     }
 
@@ -49,14 +50,15 @@ public class BaseTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
         playwrightManager.init();
-        page = playwrightManager.getPage();
+        Page page = playwrightManager.getPage();
         threadLocalPage.set(page);
     }
 
     @AfterMethod(alwaysRun = true)
+
     public void tearDown() {
         playwrightManager.cleanup();
-        threadLocalPage.remove(); // Clean up threadlocal
+        threadLocalPage.remove();
     }
 
     @AfterClass(alwaysRun = true)
